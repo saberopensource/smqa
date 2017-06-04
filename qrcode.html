@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 QR code Reader</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <script src="test_files/jquery-1.9.1.js"></script>
+    <script src="test_files/html5-qrcode.js"></script>
+	<style>
+		#html5_qrcode_video {
+			transform:rotate(90deg);
+		}
+		#text1 {
+			font-size:32px;
+			position: relative;
+			float: left;
+			top: -50px;
+			color: #f00;
+			width: 320px;
+			height: 30px;
+			text-align: center;
+			z-index:1;
+			border:0px;
+			   }
+		.div-a{
+			align:center;
+		}
+	</style>
+    <script type="text/javascript">
+    	var aj;
+		var rp;
+		var oText;
+		var txt;
+        $(document).ready(function () {
+        	var strhref = location.href;
+        	var index_1 = strhref.indexOf('assetnum=');
+        	var index_2 = strhref.indexOf('|');
+        	var str_1 = strhref.substring(index_1+1,index_2);
+        	var index_3 = strhref.indexOf('REPORTEDBY=');
+        	var str_2 = strhref.substring(index_3+1);
+			oText = document.getElementById('text1');
+			if(location.href.indexOf('assetnum')>=0){
+				oText.value = '     已扫描设备为'+str_1;
+			}else if(location.href.indexOf('REPORTEDBY')>=0){
+				oText.value = '     已扫描工号为'+str2;
+			};
+            $('#reader').html5_qrcode(
+                    function getData(data) {
+                        $('#read').html(data);
+						if(txt == 1){
+							return;
+						}
+                        if(data.indexOf("assetnum=") < 0){
+							rp = data;
+							var str1 = location.href; //取得整个地址 
+							var mystr = str1.indexOf('?'); 
+							var aj_aj = str1.substring(mystr+1);
+							var r_r;
+							var u_u;
+							var string_min = rp.indexOf('|');
+							if(str1.indexOf('assetnum') >= 0){
+								if(string_min > 18){
+									r_r = rp.substring(string_min);
+									u_u = rp.substring(0,string_min);
+								}else{
+									r_r = rp.substring(0,string_min);
+									u_u = rp.substring(string_min);
+								}
+								oText.value = '扫描已完成!请稍候....';
+								location.href = 'http://s023m009.autoexpr.com/mxqa/ui/maximo.jsp?event=loadapp&value=CURSPOTWO&additionalevent=insert&login=true&'+u_u+'&additionaleventvalue=worktype=ST|description=点检工单|'+aj_aj+r_r;
+								txt = 1;
+							}else{
+								window.location.href = 'https://s023m010.autoexpr.com/smqa/qrcode.html?'+rp;
+							}
+                        }else{
+                        	aj = data;
+							var str2 = location.href;
+							var mat1 = str2.indexOf('|');
+							var mat3 = str2.indexOf('?');
+							var string_max = str2.substring(mat3+1,mat1);
+							var reportedby;
+							var usernameAndPassword;
+							if(str2.indexOf('username') >= 0 && str2.indexOf('password') >= 0){
+								if(string_max < 15){
+									reportedby =  string_max;
+									usernameAndPassword = str2.substring(mat1);
+								}else{
+									usernameAndPassword = string_max;
+									reportedby = str2.substring(mat1);
+								}
+								oText.value = '扫描已完成!请稍候....';
+								location.href = 'http://s023m009.autoexpr.com/mxqa/ui/maximo.jsp?event=loadapp&value=CURSPOTWO&additionalevent=insert&login=true&'+usernameAndPassword+'&additionaleventvalue=worktype=ST|description=点检工单|'+aj+reportedby;	
+								txt = 1;
+							}else{
+								window.location.href = 'https://s023m010.autoexpr.com/smqa/qrcode.html?'+aj;
+							}
+                        }
+                    },
+                    function (error) {
+                        $('#read_error').html(error);
+                    }, function (videoError) {
+                        $('#vid_error').html(videoError);
+                    }
+            );
+        });
+    </script>
+</head>
+
+<body>
+<div align="center">
+<br/>
+<h1>Maximo点检工单扫描</h1>
+<br/>
+	<input type="text" id="text1"/>
+<br/><br><br>
+<div class="center" id="reader" height="550px" width="250px">
+    <video id="html5_qrcode_video"></video>
+    <canvas id="qr-canvas" height="600px" width="250px" style="display:none;"></canvas>
+</div>
+</div>
+<br><br>	
+</body>
+</html>
